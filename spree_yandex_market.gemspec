@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   #s.description = 'Add (optional) gem description here'
   s.required_ruby_version = '>= 1.8.7'
 
-  # s.author            = 'David Heinemeier Hansson'
+  s.authors             = ['parallel588']
   # s.email             = 'david@loudthinking.com'
-  s.homepage          = 'https://github.com/romul/spree-yandex-market'
+  s.homepage          = 'https://github.com/sciff/spree-yandex-market'
   # s.rubyforge_project = 'actionmailer'
 
   s.files         = `git ls-files`.split("\n")
