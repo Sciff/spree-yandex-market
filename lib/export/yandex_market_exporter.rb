@@ -3,7 +3,7 @@ require 'nokogiri'
 
 module Export
   class YandexMarketExporter
-    include Rails.application.routes.url_helper
+    include Rails.application.routes.url_helpers
     #ActionController::UrlWriter
     attr_accessor :host, :currencies
     
