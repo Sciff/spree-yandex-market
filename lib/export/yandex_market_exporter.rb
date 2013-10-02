@@ -86,7 +86,20 @@ module Export
     # :type => video
     # :type => tour
     # :type => event_ticket
-    
+
+    def delivery_cost(product)
+      return 0.0 unless ShippingMethod::FREE
+      return 0.0 unless ShippingMethod::PAID
+      return 0.0 unless Order::MIN_FREE_ORDER_PRICE
+      return 0.0 unless product.cost_price
+      return 0.0 unless product.price
+      if (product.price - product.cost_price).abs >= Order::MIN_FREE_ORDER_PRICE
+        ShippingMethod::FREE.calculator.preferred_amount
+      else
+        ShippingMethod::PAID.calculator.preferred_amount
+      end
+    end
+
     def path_to_url(path)
       "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
@@ -124,7 +137,7 @@ module Export
         # На самом деле наличие shipping_category не обязательно должно быть чтобы была возможна доставка
         # смотри http://spreecommerce.com/documentation/shipping.html#shipping-category
         xml.delivery               true
-        xml.local_delivery_cost    @config.preferred_local_delivery_cost if @config.preferred_local_delivery_cost
+        xml.local_delivery_cost    delivery_cost(product)
         xml.typePrefix             product_properties[@config.preferred_type_prefix] if product_properties[@config.preferred_type_prefix]
         xml.name                   product.name
         xml.vendor                 product_properties[@config.preferred_vendor] if product_properties[@config.preferred_vendor]
@@ -145,7 +158,7 @@ module Export
       xml.offer(opt) {
         shared_xml(xml, product, cat)
         xml.delivery               true
-        xml.local_delivery_cost @config.preferred_local_delivery_cost 
+        xml.local_delivery_cost delivery_cost(product)
         xml.name                product.name
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
         xml.description         product.description
