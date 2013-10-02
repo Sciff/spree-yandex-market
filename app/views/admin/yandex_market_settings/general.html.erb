@@ -23,7 +23,7 @@
 
 <fieldset>
   <legend><span><%= t('configure_yandex_market.export_category') %></span></legend>
-<%= select_tag 'preferences[preferred_category]', options_for_select(@taxons.collect{ |u| [u.name, u.name] }, @config.preferred_category) -%>
+<%= select_tag 'preferences[preferred_category]', options_for_select(@taxons.collect{ |u| [u.name, u.name] }), { :multiple => true, :size => 5 } -%>
 </fieldset>
 
 <fieldset>

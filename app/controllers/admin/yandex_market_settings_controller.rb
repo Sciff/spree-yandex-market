@@ -3,11 +3,10 @@ class Admin::YandexMarketSettingsController < Admin::BaseController
   before_filter :get_config
   
   def show
-    @taxons =  Taxon.roots
   end
   
   def general
-    @taxons =  Taxon.roots
+    @taxons =  Taxon.not_hidden
   end
   
   def currency
@@ -37,6 +36,9 @@ class Admin::YandexMarketSettingsController < Admin::BaseController
   end
   
   def update
+    if params[:preferences][:preferred_category].present?
+      params[:preferences][:preferred_category] = params[:preferences][:preferred_category].join(',')
+    end
     @config.attributes = params[:preferences]
     @config.save!
     

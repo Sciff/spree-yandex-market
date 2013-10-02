@@ -19,9 +19,16 @@ module Export
       
       @currencies = @config.preferred_currency.split(';').map{|x| x.split(':')}
       @currencies.first[1] = 1
-      
-      @categories = Taxon.find_by_name(@config.preferred_category)
-      @categories = @categories.self_and_descendants
+
+      @categories = []
+      cat_names = @config.preferred_category.split(',')
+      cat_names.each do |cat_name|
+        cat = Taxon.find_by_name(cat_name)
+        @categories += cat.self_and_descendants
+      end
+      @categories.uniq!
+      #@categories = Taxon.find_by_name(@config.preferred_category)
+      #@categories = @categories.self_and_descendants
       @categories_ids = @categories.collect { |x| x.id }
       
       Nokogiri::XML::Builder.new({ :encoding =>"utf-8"}, SCHEME) do |xml|
