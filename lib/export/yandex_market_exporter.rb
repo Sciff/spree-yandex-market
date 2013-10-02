@@ -61,12 +61,15 @@ module Export
               end
             }
             xml.offers { # список товаров
-              products = Product.in_taxons(@categories).active.master_price_gte(0.001)
-              products.uniq!
-              products = products.on_hand if @config.preferred_wares == "on_hand"
-              products = products.where(:export_to_yandex_market => true).group_by_products_id
-              products.each do |product|
-                offer(xml, product, product.taxons.first) 
+              if @categories_ids.present?
+                products = Product.in_taxons(@categories).active.master_price_gte(0.001)
+                products.uniq!
+                products = products.on_hand if @config.preferred_wares == "on_hand"
+                products = products.where(:export_to_yandex_market => true).group_by_products_id
+                products.each do |product|
+                  taxon = product.taxons.where(:id => @categories_ids).first
+                  offer(xml, product, taxon) if taxon
+                end
               end
             }
           }
