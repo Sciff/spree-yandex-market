@@ -100,6 +100,23 @@ module Export
       end
     end
 
+    # product name = type + brand + product.name + артикул
+    def product_name(product)
+      name = ''
+      properties = product.property_name_and_value
+      properties_names = %w(type brand)
+      properties_names.each do |property_name|
+        if properties.include? property_name
+          name += properties[property_name] + ' '
+        end
+      end
+      name += product.name
+      if product.sku.present?
+        name += ", артикул: #{product.sku}"
+      end
+      name
+    end
+
     def path_to_url(path)
       "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
@@ -137,9 +154,9 @@ module Export
         # На самом деле наличие shipping_category не обязательно должно быть чтобы была возможна доставка
         # смотри http://spreecommerce.com/documentation/shipping.html#shipping-category
         xml.delivery               true
-        xml.local_delivery_cost    delivery_cost(product)
+        xml.local_delivery_cost    delivery_cost product
         xml.typePrefix             product_properties[@config.preferred_type_prefix] if product_properties[@config.preferred_type_prefix]
-        xml.name                   product.name
+        xml.name                   product_name product
         xml.vendor                 product_properties[@config.preferred_vendor] if product_properties[@config.preferred_vendor]
         xml.vendorCode             product_properties[@config.preferred_vendor_code] if product_properties[@config.preferred_vendor_code]
         xml.model                  product_properties[@config.preferred_model] if product_properties[@config.preferred_model]
@@ -159,7 +176,7 @@ module Export
         shared_xml(xml, product, cat)
         xml.delivery               true
         xml.local_delivery_cost delivery_cost(product)
-        xml.name                product.name
+        xml.name                product_name product
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
