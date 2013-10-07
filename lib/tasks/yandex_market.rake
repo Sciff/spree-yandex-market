@@ -23,7 +23,15 @@ namespace :spree_yandex_market do
   end
 
   def generate_export_file torgovaya_sistema='yandex_market'
-    directory = File.join(Rails.root, 'public', "#{torgovaya_sistema}")
+    if Rails.env == 'production'
+      path = '../../shared'
+      unless File.exist?(File.join(Rails.root, path))
+        path = 'public'
+      end
+    else
+      path = 'public'
+    end
+    directory = File.join(Rails.root, path, "#{torgovaya_sistema}")
     mkdir_p directory unless File.exist?(directory)
     require File.expand_path(File.join(Rails.root, "config/environment"))
     require File.join(File.dirname(__FILE__), '..', "export/#{torgovaya_sistema}_exporter.rb")
