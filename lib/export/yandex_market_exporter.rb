@@ -107,11 +107,10 @@ module Export
       puts product.id
       name = ''
       properties = product.property_name_and_value
-      puts properties
       properties_names = %w(type brand)
       properties_names.each do |property_name|
         if properties.include? property_name
-          name += properties[property_name] + ' '
+          name += properties[property_name] + ' ' unless properties[property_name].nil?
         end
       end
       name += product.name
