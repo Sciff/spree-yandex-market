@@ -104,8 +104,10 @@ module Export
 
     # product name = type + brand + product.name + артикул
     def product_name(product)
+      puts product.id
       name = ''
       properties = product.property_name_and_value
+      puts properties
       properties_names = %w(type brand)
       properties_names.each do |property_name|
         if properties.include? property_name
