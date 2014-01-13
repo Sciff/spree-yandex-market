@@ -184,7 +184,7 @@ module Export
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
-        xml.picture             product.main_image
+        xml.picture             product.main_image.blank? ? '' : product.main_image.attachment.url(:large)
       }
     end
     
