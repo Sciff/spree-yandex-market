@@ -183,7 +183,8 @@ module Export
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
-        xml.downloadable false   
+        xml.downloadable        false
+        xml.picture             product.main_image
       }
     end
     
