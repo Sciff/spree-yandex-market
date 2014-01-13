@@ -142,7 +142,7 @@ module Export
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
-      xml.picture path_to_url(CGI.escape(product.images.first.attachment.url(:product, false))) unless product.images.empty?
+      xml.picture path_to_url(CGI.escape(product.main_image.attachment.url(:product, false))) unless product.main_image.blank?
     end
 
     
@@ -184,7 +184,6 @@ module Export
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
-        xml.picture             product.main_image.blank? ? '' : product.main_image.attachment.url(:large)
       }
     end
     
