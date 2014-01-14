@@ -142,10 +142,9 @@ module Export
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
-      xml.picture path_to_url(CGI.escape(product.main_image.attachment.url(:product, false))) unless product.main_image.blank?
+      xml.picture path_to_url(product.main_image.attachment.url(:product, false)) unless product.main_image.blank?
     end
 
-    
     # Обычное описание
     def offer_vendor_model(xml,product, cat)
       product_properties = { }
