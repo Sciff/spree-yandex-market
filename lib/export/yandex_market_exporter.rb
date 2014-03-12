@@ -90,15 +90,11 @@ module Export
     # :type => event_ticket
 
     def delivery_cost(product)
-      return 0.0 unless ShippingMethod::FREE
-      return 0.0 unless ShippingMethod::PAID
-      return 0.0 unless Order::MIN_FREE_ORDER_PRICE
-      return 0.0 unless product.cost_price
       return 0.0 unless product.price
-      if (product.price - product.cost_price).abs >= Order::MIN_FREE_ORDER_PRICE
-        ShippingMethod::FREE.calculator.preferred_amount
+      if (product.price ).abs >= Order::MIN_FREE_ORDER_PRICE
+        0.0
       else
-        ShippingMethod::PAID.calculator.preferred_amount
+        Order::DEFAULT_DELIVERY_COST
       end
     end
 
