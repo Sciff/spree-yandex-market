@@ -1,4 +1,4 @@
-<%= render :partial => 'admin/yandex_market_settings/shared/configuration_menu' %>
+<%= render :partial => 'spree/admin/yandex_market_settings/shared/configuration_menu' %>
 <table>
   <tr>
     <th scope="row"><%= t 'configure_yandex_market.short_name_small' %>:</th> 
@@ -43,7 +43,7 @@
   <tr>
     <th scope="row"><%= t 'configure_yandex_market.ware_property' %>:</th> 
     <td colspan=2>
-      <ul>
+      <ul class="unstyled-list">
         <% ["type_prefix", "vendor", "model", "vendor_code",
            "country_of_manufacturer", "manufacturer_warranty", "wares_type" ].each do |property| -%>
         <li>

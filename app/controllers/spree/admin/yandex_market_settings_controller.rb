@@ -1,24 +1,25 @@
 # -*- coding: utf-8 -*-
-class Admin::YandexMarketSettingsController < Admin::BaseController  
+class Spree::Admin::YandexMarketSettingsController < Spree::Admin::BaseController
   before_filter :get_config
   
   def show
+    p @config
   end
   
   def general
-    @taxons =  Taxon.not_hidden
+    @taxons =  Spree::Taxon.not_hidden
   end
   
   def currency
   end
   
   def ware_property
-    @properties = Property.all
+    @properties = Spree::Property.all
   end
   
   def export_files
     directory = File.join(Rails.root, 'public', 'yandex_market', '**', '*')
-    # нельзя вызывать стат, не удостоверившись в наличии файла!!111
+    # нельзя вызывать стат, не удостоверившись в наличии файла!!
     @export_files =  Dir[directory].map {|x| [File.basename(x), (File.file?(x) ? File.mtime(x) : 0)] }.
       sort{|x,y| y.last <=> x.last }
     e = @export_files.find {|x| x.first == "yandex_market.xml" }
@@ -36,11 +37,14 @@ class Admin::YandexMarketSettingsController < Admin::BaseController
   end
   
   def update
-    if params[:preferences][:preferred_category].present?
-      params[:preferences][:preferred_category] = params[:preferences][:preferred_category].join(',')
+    if params[:preferences][:category].present?
+      params[:preferences][:category] = params[:preferences][:category].join(', ')
     end
-    @config.attributes = params[:preferences]
-    @config.save!
+    params[:preferences].each do |name, value|
+      next unless @config.has_preference?(name)
+      @config[name] = value
+    end
+    #@config.save!
     
     respond_to do |format|
       format.html {
@@ -52,6 +56,6 @@ class Admin::YandexMarketSettingsController < Admin::BaseController
   private
 
   def get_config
-    @config = Spree::YandexMarket::Config.instance
+    @config = Spree::YandexMarketSettings.new
   end
 end

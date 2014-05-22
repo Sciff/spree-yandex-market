@@ -2,7 +2,8 @@
   <%= content_tag :h3, t('configure_yandex_market.title'), :class => "name" %>
   <br class="clear" />
 
-    <ul class="sidebar">
+    <ul class="sidebar yandex-market-sidebar unstyled-list">
+      <%- p params[:action] -%>
       <%= content_tag :li, :class => (params[:action] == "general" ? "active": "")  do -%>
       <%= link_to t("configure_yandex_market.general"), general_admin_yandex_market_settings_path %>
       <% end -%>

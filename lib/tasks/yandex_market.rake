@@ -47,13 +47,13 @@ namespace :spree_yandex_market do
     `ln -sf "#{tfile.path}" "#{File.join(directory, "#{torgovaya_sistema}.xml")}"`
 
     # Удаляем лишнии файлы
-    @config          = Spree::YandexMarket::Config.instance
+    @config          = Spree::YandexMarketSettings.new
     @number_of_files = @config.preferred_number_of_files
 
     @export_files    = Dir[File.join(directory, '**', '*')].
         map { |x| [File.basename(x), File.mtime(x)] }.
         sort { |x, y| y.last <=> x.last }
-    e                =@export_files.find { |x| x.first == "#{torgovaya_sistema}.gz" }
+    e = @export_files.find { |x| x.first == "#{torgovaya_sistema}.gz" }
     @export_files.reject! { |x| x.first == "#{torgovaya_sistema}.gz" }
     @export_files.unshift(e)
 
@@ -64,5 +64,6 @@ namespace :spree_yandex_market do
         File.delete(File.join(directory, x.first))
       end
     end
+    puts 'finish export'
   end
 end

@@ -3,7 +3,7 @@ require 'nokogiri'
 
 module Export
   class YandexMarketExporter
-    include Rails.application.routes.url_helpers
+    include Spree::Core::Engine.routes.url_helpers
     #ActionController::UrlWriter
     attr_accessor :host, :currencies
     
@@ -14,16 +14,16 @@ module Export
     end
     
     def export
-      @config = Spree::YandexMarket::Config.instance
+      @config = Spree::YandexMarketSettings.new
       @host = @config.preferred_url.sub(%r[^http://],'').sub(%r[/$], '')
       ActionController::Base.asset_host = @config.preferred_url
       
       @currencies = @config.preferred_currency.split(';').map{|x| x.split(':')}
       @currencies.first[1] = 1
       @categories = []
-      cat_names = @config.preferred_category.split(',')
+      cat_names = @config.preferred_category.split(', ')
       cat_names.each do |cat_name|
-        cat = Taxon.find_by_name(cat_name)
+        cat = Spree::Taxon.find_by_name(cat_name)
         @categories += cat.self_and_descendants
       end
       @categories.uniq!
@@ -62,10 +62,10 @@ module Export
             }
             xml.offers { # список товаров
               if @categories_ids.present?
-                products = Product.in_taxons(@categories).active.master_price_gte(0.001)
+                products = Spree::Product.in_taxons(@categories).active.master_price_gte(0.001)
                 products.uniq!
                 products = products.on_hand if @config.preferred_wares == "on_hand"
-                products = products.where(:export_to_yandex_market => true).group_by_products_id
+                products = products.where(:export_to_yandex_market => true)
                 products.find_in_batches(:batch_size => 500) do |group|
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
@@ -91,16 +91,15 @@ module Export
 
     def delivery_cost(product)
       return 0.0 unless product.price
-      if (product.price ).abs >= Order::MIN_FREE_ORDER_PRICE
+      if (product.price ).abs >= Spree::Order::MIN_FREE_ORDER_PRICE
         0.0
       else
-        Order::DEFAULT_DELIVERY_COST
+        Spree::Order::DEFAULT_DELIVERY_COST
       end
     end
 
     # product name = type + brand + product.name + артикул
     def product_name(product)
-      puts product.id
       name = ''
       properties = product.property_name_and_value
       properties_names = %w(type brand)
@@ -134,7 +133,7 @@ module Export
     
     # общая часть для всех видов продукции
     def shared_xml(xml, product, cat)
-      xml.url Spree::Config[:yandex_market_use_utm_labels] ? product_url(product, :host => @host, :utm_source => 'market.yandex.ru', :utm_medium => 'cpc', :utm_campaign => 'market') : product_url(product, :host => @host)
+      xml.url product_url(product, :host => @host)
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
@@ -275,7 +274,7 @@ module Export
         xml.director          product_properties[@config.preferred_director]
         xml.originalName      product_properties[@config.preferred_original_name]
         xml.country_of_origin product_properties[@config.preferred_video_country]
-        xml.description product_url.description
+        xml.description       product.description
       }
     end
     
