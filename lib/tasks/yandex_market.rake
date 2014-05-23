@@ -25,7 +25,7 @@ namespace :spree_yandex_market do
   def generate_export_file torgovaya_sistema='yandex_market'
     path = File.join(Rails.root, 'public')
     if Rails.env == 'production'
-      shared = File.join(Rails.root, '../../shared')
+      shared = File.join(Rails.root, '../../shared/public')
       if File.exist?(shared)
         path = File.expand_path shared
       end

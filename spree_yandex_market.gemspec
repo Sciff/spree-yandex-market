@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_yandex_market'
-  s.version     = '2.2.1'
+  s.version     = '2.2.2'
   s.summary     = 'Export products to Yandex.Market'
   #s.description = 'Add (optional) gem description here'
   s.required_ruby_version = '>= 1.9.3'
