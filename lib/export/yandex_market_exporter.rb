@@ -110,9 +110,9 @@ module Export
         end
       end
       name += product.name
-      if product.sku.present?
-        name += ", артикул: #{product.sku}"
-      end
+      #if product.sku.present?
+      #  name += ", артикул: #{product.sku}"
+      #end
       name
     end
 
