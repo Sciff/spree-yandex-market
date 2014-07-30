@@ -69,7 +69,17 @@ module Export
                 products.find_in_batches(:batch_size => 500) do |group|
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
-                    offer(xml, product, taxon) if taxon
+                    if taxon
+                      if product.has_variants?
+                        product.variants.each do |variant|
+                          offer(xml, product, variant, taxon)
+                        end
+                      else
+                        offer(xml, product, product.master, taxon)
+                      end
+
+                    end
+
                   end
                 end
               end
@@ -100,7 +110,6 @@ module Export
 
     # product name = type + brand + product.name + артикул
     def product_name(product)
-      puts product.id
       name = ''
       properties = product.property_name_and_value
       properties_names = %w(type brand)
@@ -120,34 +129,42 @@ module Export
       "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
     
-    def offer(xml,product, cat)
+    def offer(xml, product, variant, cat)
       
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       wares_type_value = product_properties[@config.preferred_wares_type]
       if ["book", "audiobook", "music", "video", "tour", "event_ticket", "vendor_model"].include? wares_type_value
-        send("offer_#{wares_type_value}".to_sym, xml, product, cat)
+        send("offer_#{wares_type_value}".to_sym, xml, product, variant, cat)
       else
-        send("offer_#{DEFAULT_OFFER}".to_sym, xml, product, cat)      
+        send("offer_#{DEFAULT_OFFER}".to_sym, xml, product, variant, cat)
       end
     end
     
     # общая часть для всех видов продукции
-    def shared_xml(xml, product, cat)
+    def shared_xml(xml, product, variant, cat)
       xml.url Spree::Config[:yandex_market_use_utm_labels] ? product_url(product, :host => @host, :utm_source => 'market.yandex.ru', :utm_medium => 'cpc', :utm_campaign => 'market') : product_url(product, :host => @host)
-      xml.price product.price
+      xml.price variant.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
-      xml.picture path_to_url(product.main_image.attachment.url(:product, false)) unless product.main_image.blank?
+      if variant.images.any?
+        p variant.id
+        xml.picture path_to_url(variant.images.first.attachment.url(:product, false))
+      elsif product.main_image.present?
+        xml.picture path_to_url(product.main_image.attachment.url(:product, false))
+      end
+      variant.option_values.each do |option_value|
+        xml.param(option_value.presentation, :name => option_value.option_type.presentation)
+      end
     end
 
     # Обычное описание
-    def offer_vendor_model(xml,product, cat)
+    def offer_vendor_model(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "vendor.model", :available => product.has_stock? }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         # xml.delivery               !product.shipping_category.blank?
         # На самом деле наличие shipping_category не обязательно должно быть чтобы была возможна доставка
         # смотри http://spreecommerce.com/documentation/shipping.html#shipping-category
@@ -166,12 +183,12 @@ module Export
     end
 
     # простое описание
-    def offer_simple(xml, product, cat)
+    def offer_simple(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id,  :available => product.has_stock? }
+      opt = { :id => variant.id,  :available => variant.in_stock? }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         xml.delivery               true
         xml.local_delivery_cost delivery_cost(product)
         xml.name                product_name product
@@ -183,12 +200,12 @@ module Export
     end
     
     # Книги
-    def offer_book(xml, product, cat)
+    def offer_book(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "book", :available => product.has_stock? }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         
         xml.delivery true
         xml.local_delivery_cost @config.preferred_local_delivery_cost
@@ -212,12 +229,12 @@ module Export
     end
     
     # Аудиокниги
-    def offer_audiobook(xml, product, cat)
+    def offer_audiobook(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }      
       opt = { :id => product.id, :type => "audiobook", :available => product.has_stock?  }
       xml.offer(opt) {  
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         
         xml.author product_properties[@config.preferred_author]
         xml.name product.name
@@ -240,12 +257,12 @@ module Export
     end
     
     # Описание музыкальной продукции
-    def offer_music(xml, product, cat)
+    def offer_music(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "artist.title", :available => product.has_stock?  }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         xml.delivery true        
 
         
@@ -260,12 +277,12 @@ module Export
     end
     
     # Описание видео продукции:
-    def offer_video(xml, product, cat)
+    def offer_video(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "artist.title", :available => product.has_stock?  }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         
         xml.delivery true        
         xml.title             product_properties[@config.preferred_title]
@@ -280,12 +297,12 @@ module Export
     end
     
     # Описание тура
-    def offer_tour(xml, product, cat)
+    def offer_tour(xml, product, variant,cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "tour", :available => product.has_stock?  }
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         
         xml.delivery true        
         xml.local_delivery_cost @config.preferred_local_delivery_cost
@@ -306,12 +323,12 @@ module Export
     end
     
     # Описание билетов на мероприятия
-    def offer_event_ticket(xml, product, cat)
+    def offer_event_ticket(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }      
       opt = { :id => product.id, :type => "event-ticket", :available => product.has_stock?  }    
       xml.offer(opt) {
-        shared_xml(xml, product, cat)
+        shared_xml(xml, product, variant, cat)
         xml.delivery true                
         xml.local_delivery_cost @config.preferred_local_delivery_cost
         xml.name product.name
