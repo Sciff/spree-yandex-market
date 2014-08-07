@@ -4,6 +4,7 @@ require 'nokogiri'
 module Export
   class YandexMarketExporter
     include Rails.application.routes.url_helpers
+    include ActionView::Helpers
     #ActionController::UrlWriter
     attr_accessor :host, :currencies
     
@@ -153,9 +154,9 @@ module Export
       elsif product.main_image.present?
         xml.picture path_to_url(product.main_image.attachment.url(:product, false))
       end
-      variant.option_values.each do |option_value|
-        xml.param(option_value.presentation, :name => option_value.option_type.presentation)
-      end
+      #variant.option_values.each do |option_value|
+      #  xml.param(option_value.presentation, :name => option_value.option_type.presentation)
+      #end
     end
 
     # Обычное описание
@@ -193,7 +194,7 @@ module Export
         xml.local_delivery_cost delivery_cost(product)
         xml.name                product_name product
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
-        xml.description         product.description
+        xml.description         sanitize(product.description.to_s.humanize)
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
       }
