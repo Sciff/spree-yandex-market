@@ -194,7 +194,8 @@ module Export
         xml.local_delivery_cost delivery_cost(product)
         xml.name                product_name product
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
-        xml.description         sanitize(product.description.to_s.humanize)
+        desc = strip_tags(product.description.to_s.humanize)
+        xml.description         strip_tags(product.description.to_s.humanize)
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
       }
