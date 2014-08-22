@@ -71,14 +71,7 @@ module Export
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
                     if taxon
-                      if product.has_variants?
-                        product.variants.each do |variant|
-                          offer(xml, product, variant, taxon)
-                        end
-                      else
-                        offer(xml, product, product.master, taxon)
-                      end
-
+                      offer(xml, product, product.master, taxon)
                     end
 
                   end
@@ -131,7 +124,6 @@ module Export
     end
     
     def offer(xml, product, variant, cat)
-      
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       wares_type_value = product_properties[@config.preferred_wares_type]
