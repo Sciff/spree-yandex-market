@@ -179,7 +179,7 @@ module Export
     def offer_simple(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => variant.id,  :available => variant.in_stock? }
+      opt = { :id => product.id,  :available => product.has_stock? }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery               true
@@ -251,7 +251,7 @@ module Export
     end
     
     # Описание музыкальной продукции
-    def offer_music(xml, product, variant,cat)
+    def offer_music(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
       opt = { :id => product.id, :type => "artist.title", :available => product.has_stock?  }
