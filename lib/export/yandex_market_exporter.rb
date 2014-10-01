@@ -24,7 +24,7 @@ module Export
       cat_names = @config.preferred_category.split(', ')
       cat_names.each do |cat_name|
         cat = Spree::Taxon.find_by_name(cat_name)
-        @categories += cat.self_and_descendants
+        @categories += cat.self_and_descendants if cat
       end
       @categories.uniq!
       #@preferred_category = Taxon.find_by_name(@config.preferred_category)
