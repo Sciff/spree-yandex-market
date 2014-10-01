@@ -70,13 +70,14 @@ module Export
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
                     if taxon
-                      if product.has_variants?
-                        product.variants.each do |variant|
-                          offer(xml, product, variant, taxon)
-                        end
-                      else
-                        offer(xml, product, product.master, taxon)
-                      end
+                      offer(xml, product, variant, taxon)
+                      #if product.has_variants?
+                      #  product.variants.each do |variant|
+                      #    offer(xml, product, variant, taxon)
+                      #  end
+                      #else
+                      #  offer(xml, product, product.master, taxon)
+                      #end
                     end
                   end
                 end
@@ -183,7 +184,7 @@ module Export
     def offer_simple(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => variant.id,  :available => variant.in_stock? }
+      opt = { :id => product.id,  :available => product.in_stock? }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery            true
