@@ -70,7 +70,7 @@ module Export
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
                     if taxon
-                      offer(xml, product, variant, taxon)
+                      offer(xml, product, product.master, taxon)
                       #if product.has_variants?
                       #  product.variants.each do |variant|
                       #    offer(xml, product, variant, taxon)
