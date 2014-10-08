@@ -194,6 +194,8 @@ module Export
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
+        xml.brand               product.brand
+        xml.type                product.product_type
       }
     end
     
