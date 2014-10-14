@@ -184,18 +184,16 @@ module Export
     def offer_simple(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id,  :available => product.has_stock? }
+      opt = { :id => product.id,  :available => product.has_stock?, :type => product_name product }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
-        xml.name                product_name product
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
-        xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
-        xml.brand               product.brand
-        xml.type                product.product_type
+        xml.vendor              product.brand
+        xml.typePrefix          product.product_type
       }
     end
     
