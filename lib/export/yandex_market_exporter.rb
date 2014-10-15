@@ -189,13 +189,13 @@ module Export
         shared_xml(xml, product, variant, cat)
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
+        xml.typePrefix          product.product_type
+        xml.vendor              product.brand
+        xml.vendorCode          product.sku
         xml.model               product.name
-        xml.vendorCode          product_properties[@config.preferred_vendor_code]
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
         xml.downloadable        false
-        xml.vendor              product.brand
-        xml.typePrefix          product.product_type
       }
     end
     
