@@ -189,7 +189,7 @@ module Export
         shared_xml(xml, product, variant, cat)
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
-        xml.model               product_name product
+        xml.model               product.name
         xml.vendorCode          product_properties[@config.preferred_vendor_code]
         xml.description         product.description
         xml.country_of_origin   product_properties[@config.preferred_country_of_manufacturer]
