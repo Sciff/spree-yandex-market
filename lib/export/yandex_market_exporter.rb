@@ -142,7 +142,7 @@ module Export
     
     # общая часть для всех видов продукции
     def shared_xml(xml, product, variant, cat)
-      xml.url product_url(product, :host => @host) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
+      xml.url product_url(product, host: @host, protocol: :https) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
