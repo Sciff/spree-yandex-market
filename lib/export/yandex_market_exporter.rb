@@ -125,7 +125,7 @@ module Export
     end
 
     def path_to_url(path)
-      "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
+      "https://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
     
     def offer(xml, product, variant, cat)
