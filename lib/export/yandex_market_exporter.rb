@@ -125,7 +125,7 @@ module Export
     end
 
     def path_to_url(path)
-      "https://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
+      "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
     
     def offer(xml, product, variant, cat)
@@ -142,7 +142,7 @@ module Export
     
     # общая часть для всех видов продукции
     def shared_xml(xml, product, variant, cat)
-      xml.url product_url(product, host: @host, protocol: :https) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
+      xml.url product_url(product, host: @host, protocol: :http) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
