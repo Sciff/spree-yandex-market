@@ -62,7 +62,7 @@ module Export
             }
             xml.offers { # список товаров
               if @categories_ids.present?
-                products = Spree::Product.in_taxons(@categories).active.master_price_gte(0.001)
+                products = Spree::Product.in_taxons(@categories).active.master_price_gte(0.001).visible
                 products.uniq!
                 products = products.on_hand if @config.preferred_wares == "on_hand"
                 products = products.where(:export_to_yandex_market => true)
