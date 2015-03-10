@@ -62,10 +62,10 @@ module Export
             }
             xml.offers { # список товаров
               if @categories_ids.present?
-                products = Spree::Product.in_taxons(@categories).active.master_price_gte(0.001).visible
+                products = Spree::Product.in_taxons(@categories).active.master_price_gte(0.001)
                 products.uniq!
                 products = products.on_hand if @config.preferred_wares == "on_hand"
-                products = products.where(:export_to_yandex_market => true)
+                products = products.where(:export_to_yandex_market => true).visible
                 products.find_in_batches(:batch_size => 500) do |group|
                   group.each do |product|
                     taxon = product.taxons.where(:id => @categories_ids).first
