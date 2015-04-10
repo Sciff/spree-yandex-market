@@ -20,8 +20,7 @@ class Spree::Admin::YandexMarketSettingsController < Spree::Admin::BaseControlle
   def export_files
     directory = File.join(Rails.root, 'public', 'yandex_market', '**', '*')
     # нельзя вызывать стат, не удостоверившись в наличии файла!!
-    @export_files =  Dir[directory].map {|x| [File.basename(x), (File.file?(x) ? File.mtime(x) : 0)] }.
-      sort{|x,y| y.last <=> x.last }
+    @export_files =  Dir[directory].map {|x| [File.basename(x), (File.file?(x) ? File.mtime(x) : 0)] }.sort{|x,y| y.last <=> x.last }
     e = @export_files.find {|x| x.first == "yandex_market.xml" }
     @export_files.reject! {|x| x.first == "yandex_market.xml" }
     @export_files.unshift(e) unless e.blank?
