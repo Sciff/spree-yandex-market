@@ -45,7 +45,7 @@ class Spree::Admin::YandexMarketSettingsController < Spree::Admin::BaseControlle
   end
 
   def run_export_wardrobe
-    command = %{cd #{Rails.root} && RAILS_ENV=#{Rails.env} bundle exec rake spree_yandex_market:generate_ym_wardrobe > log/export.log}
+    command = %{cd #{Rails.root} && RAILS_ENV=#{Rails.env} bundle exec rake spree_yandex_market:generate_ym_wardrobe > log/export.log &}
     logger.info "[ yandex market ] Запуск формирование файла экспорта из блока администрирования "
     logger.info "[ yandex market ] команда - #{command} "
     system command
