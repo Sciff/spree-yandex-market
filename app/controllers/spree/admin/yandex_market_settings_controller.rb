@@ -25,7 +25,16 @@ class Spree::Admin::YandexMarketSettingsController < Spree::Admin::BaseControlle
     @export_files.reject! {|x| x.first == "yandex_market.xml" }
     @export_files.unshift(e) unless e.blank?
   end
-  
+
+  def export_files_wardrobe
+    directory = File.join(Rails.root, 'public', 'yandex_market_wardrobe', '**', '*')
+    # нельзя вызывать стат, не удостоверившись в наличии файла!!
+    @export_files =  Dir[directory].map {|x| [File.basename(x), (File.file?(x) ? File.mtime(x) : 0)] }.sort{|x,y| y.last <=> x.last }
+    e = @export_files.find {|x| x.first == "yandex_market_wardrobe.xml" }
+    @export_files.reject! {|x| x.first == "yandex_market_wardrobe.xml" }
+    @export_files.unshift(e) unless e.blank?
+  end
+
   def run_export
     command = %{cd #{Rails.root} && RAILS_ENV=#{Rails.env} bundle exec rake spree_yandex_market:generate_ym > log/export.log &}
     logger.info "[ yandex market ] Запуск формирование файла экспорта из блока администрирования "
@@ -33,6 +42,15 @@ class Spree::Admin::YandexMarketSettingsController < Spree::Admin::BaseControlle
     system command
     flash[:notice] = "Обновите страницу через несколько минут."
     redirect_to export_files_admin_yandex_market_settings_url
+  end
+
+  def run_export_wardrobe
+    command = %{cd #{Rails.root} && RAILS_ENV=#{Rails.env} bundle exec rake spree_yandex_market:generate_ym_wardrobe > log/export.log}
+    logger.info "[ yandex market ] Запуск формирование файла экспорта из блока администрирования "
+    logger.info "[ yandex market ] команда - #{command} "
+    system command
+    flash[:notice] = "Обновите страницу через несколько минут."
+    redirect_to export_files_wardrobe_admin_yandex_market_settings_url
   end
   
   def update

@@ -17,6 +17,12 @@ namespace :spree_yandex_market do
     generate_export_file 'yandex_market'
   end
 
+  desc "Generate Yandex.Market export file wardrobe"
+  task :generate_ym_wardrobe => :environment do
+    generate_export_file 'yandex_market_wardrobe'
+  end
+
+
   desc "Generate Torg.mail.ru export file"
   task :generate_torg_mail_ru => :environment do
     generate_export_file 'torg_mail_ru'

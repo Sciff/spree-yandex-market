@@ -10,6 +10,7 @@ ru:
     list_currency: Список валют
     export_wares: Отбор товара
     export_files: Сформированные файлы
+    export_files_wardrobe: Сформированные файлы гардероб
     export_file: Ссылка на файл
     what_wares_export: Какой товар выгружать в Яндекс.Маркет
     all_active_wares: Весь активный товар 
