@@ -60,9 +60,10 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
     elsif product.main_image.present?
       xml.picture path_to_url(product.main_image.attachment.url(:product, false))
     end
-    variant.option_values.each do |option_value|
-      unless option_value.option_type.presentation.mb_chars.downcase.to_s == 'размер'
-        xml.param(option_value.presentation, :name => option_value.option_type.presentation.mb_chars.capitalize.to_s)
+
+    product.product_properties.each do |product_property|
+      unless ['brand', 'type'].include? product_property.property.name.downcase
+        xml.param(product_property.value, name: product_property.property.presentation.mb_chars.capitalize.to_s)
       end
     end
   end
