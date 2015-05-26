@@ -41,7 +41,7 @@ namespace :spree_yandex_market do
     require File.expand_path(File.join(Rails.root, "config/environment"))
     require File.join(File.dirname(__FILE__), '..', "export/#{torgovaya_sistema}_exporter.rb")
     ::Time::DATE_FORMATS[:ym] = "%Y-%m-%d %H:%M"
-    yml_xml                   = Export.const_get("#{torgovaya_sistema.camelize}Exporter").new.export
+    yml_xml = Export.const_get("#{torgovaya_sistema.camelize}Exporter").new.export
     puts 'saving file...'
 
     # Создаем файл, сохраняем в нужной папке,

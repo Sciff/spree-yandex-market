@@ -14,6 +14,7 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
       opt = { :id => product.id,  :available => product.has_stock?, :type => "vendor.model" }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
+        xml.cpa                 cat.wardrobe? ? 1 : 0
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
         xml.typePrefix          product.product_type
