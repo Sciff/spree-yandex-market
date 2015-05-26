@@ -38,6 +38,7 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
           xml.param(size.name, name: 'Размер', unit: size.size_type)
         end
         xml.market_category     product.taxons.pluck(:market_category).compact.first
+        xml.cpa                 cat.wardrobe? ? 1 : 0
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
         xml.typePrefix          product.product_type
