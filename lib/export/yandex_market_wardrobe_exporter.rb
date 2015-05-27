@@ -14,7 +14,7 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
       opt = { :id => product.id,  :available => product.has_stock?, :type => "vendor.model" }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
-        xml.cpa                 cat.wardrobe? ? 1 : 0
+        xml.cpa                 0
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
         xml.typePrefix          product.product_type
@@ -38,7 +38,7 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
           xml.param(size.name, name: 'Размер', unit: size.size_type)
         end
         xml.market_category     product.taxons.pluck(:market_category).compact.first
-        xml.cpa                 cat.wardrobe? ? 1 : 0
+        xml.cpa                 1
         xml.delivery            true
         xml.local_delivery_cost delivery_cost(product)
         xml.typePrefix          product.product_type
@@ -52,6 +52,9 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
     end
   end
 
+  do
+
+end
   def variant_shared_xml(xml, product, variant, cat)
     xml.url product_url(product, host: @host, protocol: :http) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
     xml.price variant.price
