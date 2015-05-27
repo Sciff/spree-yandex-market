@@ -52,9 +52,6 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
     end
   end
 
-  do
-
-end
   def variant_shared_xml(xml, product, variant, cat)
     xml.url product_url(product, host: @host, protocol: :http) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
     xml.price variant.price
