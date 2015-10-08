@@ -15,7 +15,7 @@ module Export
     
     def export
       @config = Spree::YandexMarketSettings.new
-      @host = @config.preferred_url.sub(%r[^http://],'').sub(%r[/$], '')
+      @host = @config.preferred_url.sub(%r[^https://],'').sub(%r[^http://],'').sub(%r[/$], '')
       ActionController::Base.asset_host = @config.preferred_url
       
       @currencies = @config.preferred_currency.split(';').map{|x| x.split(':')}
@@ -125,7 +125,7 @@ module Export
     end
 
     def path_to_url(path)
-      "http://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
+      "https://#{@host.sub(%r[^http://],'')}/#{path.sub(%r[^/],'')}"
     end
     
     def offer(xml, product, variant, cat)
@@ -142,14 +142,14 @@ module Export
     
     # общая часть для всех видов продукции
     def shared_xml(xml, product, variant, cat)
-      xml.url product_url(product, host: @host, protocol: :http) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
+      xml.url product_url(product, host: @host, protocol: :https) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
       xml.price product.price
       xml.currencyId @currencies.first.first
       xml.categoryId cat.id
-      if variant.images.any?
-        xml.picture path_to_url(variant.images.first.attachment.url(:product, false))
-      elsif product.main_image.present?
+      if product.main_image.present?
         xml.picture path_to_url(product.main_image.attachment.url(:product, false))
+      elsif variant.images.any?
+        xml.picture path_to_url(variant.images.first.attachment.url(:product, false))
       end
       variant.option_values.each do |option_value|
         xml.param(option_value.presentation, :name => option_value.option_type.presentation)
