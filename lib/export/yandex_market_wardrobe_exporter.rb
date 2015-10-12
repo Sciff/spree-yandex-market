@@ -53,14 +53,12 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
   end
 
   def variant_shared_xml(xml, product, variant, cat)
-    xml.url product_url(product, host: @host, protocol: :http) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
+    xml.url product_url(product, host: @host, protocol: :https) + "/?utm_source=market.yandex.ru&amp;utm_term=#{product.id}"
     xml.price variant.price
     xml.currencyId @currencies.first.first
     xml.categoryId cat.id
-    if variant.images.any?
-      xml.picture path_to_url(variant.images.first.attachment.url(:product, false))
-    elsif product.main_image.present?
-      xml.picture path_to_url(product.main_image.attachment.url(:product, false))
+    product.variant_images.order([:is_main, :position]).each do |image|
+      xml.picture path_to_url(image.attachment.url(:product, false))
     end
 
     product.product_properties.each do |product_property|
