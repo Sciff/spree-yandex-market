@@ -160,7 +160,7 @@ module Export
     def offer_vendor_model(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id, :type => "vendor.model", :available => product.has_stock? }
+      opt = { :id => product.id, :type => "vendor.model", :available => product.available? }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         # xml.delivery               !product.shipping_category.blank?
@@ -184,7 +184,7 @@ module Export
     def offer_simple(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id,  :available => product.has_stock?, :type => "vendor.model" }
+      opt = { :id => product.id,  :available => product.available?, :type => "vendor.model" }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery            true
@@ -203,7 +203,7 @@ module Export
     def offer_book(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id, :type => "book", :available => product.has_stock? }
+      opt = { :id => product.id, :type => "book", :available => product.available? }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         
@@ -232,7 +232,7 @@ module Export
     def offer_audiobook(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }      
-      opt = { :id => product.id, :type => "audiobook", :available => product.has_stock?  }
+      opt = { :id => product.id, :type => "audiobook", :available => product.available?  }
       xml.offer(opt) {  
         shared_xml(xml, product, variant, cat)
         
@@ -260,7 +260,7 @@ module Export
     def offer_music(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id, :type => "artist.title", :available => product.has_stock?  }
+      opt = { :id => product.id, :type => "artist.title", :available => product.available?  }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery true        
@@ -280,7 +280,7 @@ module Export
     def offer_video(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id, :type => "artist.title", :available => product.has_stock?  }
+      opt = { :id => product.id, :type => "artist.title", :available => product.available?  }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         
@@ -300,7 +300,7 @@ module Export
     def offer_tour(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }
-      opt = { :id => product.id, :type => "tour", :available => product.has_stock?  }
+      opt = { :id => product.id, :type => "tour", :available => product.available?  }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         
@@ -326,7 +326,7 @@ module Export
     def offer_event_ticket(xml, product, variant, cat)
       product_properties = { }
       product.product_properties.map {|x| product_properties[x.property_name] = x.value }      
-      opt = { :id => product.id, :type => "event-ticket", :available => product.has_stock?  }    
+      opt = { :id => product.id, :type => "event-ticket", :available => product.available?  }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.delivery true                

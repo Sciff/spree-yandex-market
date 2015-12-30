@@ -11,7 +11,7 @@ class Export::YandexMarketWardrobeExporter < Export::YandexMarketExporter
     if product.taxons.where(wardrobe: true).any?
       offer_simple_variant(xml, product, cat, product_properties)
     else
-      opt = { :id => product.id,  :available => product.has_stock?, :type => "vendor.model" }
+      opt = { :id => product.id,  :available => product.available?, :type => "vendor.model" }
       xml.offer(opt) {
         shared_xml(xml, product, variant, cat)
         xml.cpa                 0
